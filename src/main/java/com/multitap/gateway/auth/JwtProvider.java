@@ -21,6 +21,7 @@ public class JwtProvider {
 
     /**
      * 토큰 검증
+     *
      * @param token jwtToken
      * @return true(유효) / false(X)
      */
@@ -45,7 +46,7 @@ public class JwtProvider {
     }
 
     public Key getSignKey() {
-        return Keys.hmacShaKeyFor( Objects.requireNonNull(env.getProperty("JWT.secret-key")).getBytes() );
+        return Keys.hmacShaKeyFor(Objects.requireNonNull(env.getProperty("jwt.secret")).getBytes());
     }
 
 
