@@ -31,7 +31,6 @@ spring:
               - DELETE
               - OPTIONS
       routes:
-        # Feed Service ?? ??
         - id: member-service
           uri: lb://MEMBER-SERVICE
           predicates:
@@ -39,23 +38,13 @@ spring:
           filters:
             - StripPrefix=1
 
-        # Auth Service ?? ??
         - id: auth-service
           uri: lb://AUTH-SERVICE
           predicates:
             - Path=/auth/**
           filters:
             - StripPrefix=1
-
-        # JWT ??? ??? ?? ?? (JWT ?? ??)
-        - id: auth-service-protected
-          uri: lb://AUTH-SERVICE
-          predicates:
-            - Path=/auth/**
-          filters:
-            - StripPrefix=1
             - JwtAuthenticationFilter
-
 
 jwt:
   secret-key: ${JWT_SECRET_KEY}
