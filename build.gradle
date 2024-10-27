@@ -25,7 +25,7 @@ dependencies {
     // Spring Boot Actuator - 게이트웨이 모니터링
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     // Spring Boot Web - 기본적인 웹 기능 제공
-    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
     // Spring Cloud Gateway - 게이트웨이 기능
     implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
 
