@@ -31,13 +31,6 @@ spring:
               - DELETE
               - OPTIONS
       routes:
-        - id: member-service
-          uri: lb://MEMBER-SERVICE
-          predicates:
-            - Path=/member/**
-          filters:
-            - StripPrefix=1
-
         - id: auth-service
           uri: lb://AUTH-SERVICE
           predicates:
