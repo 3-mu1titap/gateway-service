@@ -1,11 +1,6 @@
-server:
-  port: 8000
-  forward-headers-strategy: framework
-
 spring:
   application:
-    name: gateway-service
-
+    name: auth-service
   cloud:
     gateway:
       default-filters:
@@ -30,14 +25,37 @@ spring:
               - PATCH
               - DELETE
               - OPTIONS
-      routes:
-        - id: auth-service
-          uri: lb://AUTH-SERVICE
-          predicates:
-            - Path=/auth/**
-          filters:
-            - StripPrefix=1
-            - JwtAuthenticationFilter
+    routes:
+      - id: auth-service
+        uri: lb://AUTH-SERVICE
+        predicates:
+          - Path=/auth/**
+        filters:
+          - StripPrefix=1
+          - JwtAuthenticationFilter
 
-jwt:
-  secret: ${JWT_SECRET}
+      - id: auth-service-swagger
+        uri: lb://AUTH-SERVICE
+        predicates:
+          - Path=/auth/swagger-ui/**
+        filters:
+          - StripPrefix=2
+          # Swagger UI 요청에 대해 인증 필터를 생략할 수 있는 추가 설정 필요 (조건부 필터 사용 등)
+
+  jwt:
+    secret: ${JWT_SECRET}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+
+server:
+  port: 8000
+  forward-headers-strategy: framework
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui/**  # Swagger UI 경로 설정

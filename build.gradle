@@ -29,6 +29,9 @@ dependencies {
     // Spring Cloud Gateway - 게이트웨이 기능
     implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
 
+    // Spring Data Redis - Redis 사용을 위한 스타터
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
     // JWT - 인증 토큰을 검증하기 위해 필요한 의존성
     implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
     implementation 'io.jsonwebtoken:jjwt-impl:0.12.5'

@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -22,14 +23,16 @@ import reactor.core.publisher.Mono;
 public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAuthenticationFilter.Config> {
 
     private final JwtProvider jwtProvider;
+    private final RedisTemplate<String, String> redisTemplate;
 
-    public JwtAuthenticationFilter(JwtProvider jwtProvider) {
+    public JwtAuthenticationFilter(JwtProvider jwtProvider, RedisTemplate<String, String> redisTemplate) {
         super(Config.class);
         this.jwtProvider = jwtProvider;
+        this.redisTemplate = redisTemplate;
     }
 
     public static class Config {
-        // Put the configuration properties
+
     }
 
     @Override
@@ -37,18 +40,22 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
         return (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
             String authorizationHeader = request.getHeaders().getFirst("Authorization");
-
             if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
                 return handleException(exchange, BaseResponseStatus.NO_JWT_TOKEN);
             }
-
             String token = authorizationHeader.replace("Bearer ", "");
+            if (isBlacklisted(token)) {
+                return handleException(exchange, BaseResponseStatus.TOKEN_NOT_VALID);
+            }
             if (!jwtProvider.validateToken(token)) {
                 return handleException(exchange, BaseResponseStatus.TOKEN_NOT_VALID);
             }
-
             return chain.filter(exchange);
         };
+    }
+
+    private boolean isBlacklisted(String token) {
+        return Boolean.TRUE.equals(redisTemplate.hasKey(token));
     }
 
     private Mono<Void> handleException(ServerWebExchange exchange, BaseResponseStatus status) {
