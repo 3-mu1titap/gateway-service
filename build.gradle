@@ -28,6 +28,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     // Spring Cloud Gateway - 게이트웨이 기능
     implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 
     // JWT - 인증 토큰을 검증하기 위해 필요한 의존성
     implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
@@ -37,6 +38,9 @@ dependencies {
     // Lombok - 코드 간결화를 위해 필요 (선택 사항)
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 dependencyManagement {
