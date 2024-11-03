@@ -83,4 +83,4 @@ jobs:
             sudo docker stop ${{ secrets.GATEWAY_SERVICE_CONTAINER_NAME }}  # 컨테이너 중지
             sudo docker rm -f ${{ secrets.GATEWAY_SERVICE_CONTAINER_NAME }}  # 컨테이너 제거
             sudo docker rmi -f ${{ secrets.DOCKERHUB_USERNAME }}/gateway-service:latest  # 이미지 제거
-            sudo docker run -d --name ${{ secrets.GATEWAY_SERVICE_CONTAINER_NAME }} -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/gateway-service:latest
+            sudo docker run -d --name ${{ secrets.GATEWAY_SERVICE_CONTAINER_NAME }} -p 8000:8000 ${{ secrets.DOCKERHUB_USERNAME }}/gateway-service:latest
