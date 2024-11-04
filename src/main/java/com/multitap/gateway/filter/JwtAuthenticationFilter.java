@@ -32,7 +32,6 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
     }
 
     public static class Config {
-
     }
 
     @Override
@@ -40,21 +39,35 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
         return (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
             String authorizationHeader = request.getHeaders().getFirst("Authorization");
+            String refreshToken = request.getHeaders().getFirst("Refresh-Token");
+
             if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
                 return handleException(exchange, BaseResponseStatus.NO_JWT_TOKEN);
             }
+
             String token = authorizationHeader.replace("Bearer ", "");
+
+            // 블랙리스트 체크
             if (isBlacklisted(token)) {
                 return handleException(exchange, BaseResponseStatus.TOKEN_NOT_VALID);
             }
+
+            // 액세스 토큰 검증
             if (!jwtProvider.validateToken(token)) {
-                return handleException(exchange, BaseResponseStatus.TOKEN_NOT_VALID);
+                // 액세스 토큰이 만료된 경우 리프레시 토큰을 확인
+                if (refreshToken == null || !jwtProvider.validateToken(refreshToken)) {
+                    return handleException(exchange, BaseResponseStatus.TOKEN_NOT_VALID);
+                }
+
+                return handleException(exchange, BaseResponseStatus.ACCESS_TOKEN_EXPIRE);
             }
+
             return chain.filter(exchange);
         };
     }
 
     private boolean isBlacklisted(String token) {
+        // Redis에서 블랙리스트 체크
         return Boolean.TRUE.equals(redisTemplate.hasKey(token));
     }
 
@@ -76,5 +89,4 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
         DataBuffer buffer = response.bufferFactory().wrap(data);
         return response.writeWith(Mono.just(buffer)).then(Mono.empty());
     }
-
 }
