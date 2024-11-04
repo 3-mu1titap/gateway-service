@@ -29,15 +29,21 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
     }
 
     public static class Config {
-        // Put the configuration properties
+
     }
 
     @Override
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
-            String authorizationHeader = request.getHeaders().getFirst("Authorization");
+            String path = request.getURI().getPath();
 
+            // Swagger 경로에 대해 필터를 적용하지 않음
+            if (path.contains("/swagger-ui") || path.contains("/v3/api-docs")) {
+                return chain.filter(exchange); // JWT 검증 없이 다음 필터로 전달
+            }
+
+            String authorizationHeader = request.getHeaders().getFirst("Authorization");
             if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
                 return handleException(exchange, BaseResponseStatus.NO_JWT_TOKEN);
             }

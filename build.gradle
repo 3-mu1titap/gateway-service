@@ -41,6 +41,9 @@ dependencies {
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    //swagger
+    implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webflux-ui', version: '2.2.0'
 }
 
 dependencyManagement {
