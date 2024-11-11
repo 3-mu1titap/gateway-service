@@ -48,12 +48,6 @@ jobs:
       - name: Spring Boot Build
         run: ./gradlew clean build -x test
 
-        env:
-          DB_HOST: ${{ secrets.EC2_HOST }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PWD: ${{ secrets.DB_PWD }}
-
-
       # DockerHub Login
       - name: docker login
         uses: docker/login-action@v2
